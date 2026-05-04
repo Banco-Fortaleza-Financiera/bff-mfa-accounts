@@ -9,14 +9,6 @@ ENV NPM_CONFIG_FUND=false
 COPY package*.json ./
 RUN npm install --ignore-scripts
 
-FROM deps AS dev
-
-COPY . .
-
-EXPOSE 4201
-
-CMD ["npm", "run", "start:mf:dev"]
-
 FROM deps AS build
 
 ARG BUILD_CONFIGURATION=dev
