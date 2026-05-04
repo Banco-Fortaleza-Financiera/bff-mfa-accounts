@@ -1,0 +1,84 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* You can add global styles to this file, and also import other style files */
+
+
+/*  Colores principales */
+$color-primary: #0B3C5D;     // Azul profundo
+$color-primary-light: #1D6FA3; // Azul medio
+$color-secondary: #D4AF37;   // Dorado elegante
+
+/*  Colores neutros */
+$color-dark: #2E2E2E;        // Gris oscuro (texto)
+$color-light: #F4F6F8;       // Gris claro (fondos)
+$color-white: #FFFFFF;       // Blanco
+
+/*  Estados */
+$color-success: #28A745;     // Verde éxito
+$color-danger: #DC3545;      // Rojo error
+$color-warning: #F39C12;     // Naranja advertencia
+
+
+:root {
+  --primary: #0B3C5D;
+  --primary-light: #1D6FA3;
+  --secondary: #D4AF37;
+
+  --dark: #2E2E2E;
+  --light: #F4F6F8;
+  --white: #FFFFFF;
+
+  --success: #28A745;
+  --danger: #DC3545;
+  --warning: #F39C12;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background-color: $color-light;
+  color: $color-dark;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+.shell__main > router-outlet + * {
+  display: block;
+  flex: 1;
+  min-height: 100%;
+  width: 100%;
+}
+
+
+.btn-primary {
+  background-color: $color-primary;
+  color: $color-white;
+  border: none;
+
+  &:hover {
+    background-color: $color-primary-light;
+  }
+}
+
+.btn-secondary {
+  background-color: $color-secondary;
+  color: $color-dark;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.bg-primary { background-color: $color-primary; }
+.bg-light { background-color: $color-light; }
+.text-primary { color: $color-primary; }
+.text-secondary { color: $color-secondary; }
+.text-success { color: $color-success; }
+.text-danger { color: $color-danger; }
