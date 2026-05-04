@@ -1,0 +1,170 @@
+<section class="accounts-page">
+  <header class="accounts-page__header">
+    <div>
+      <p class="accounts-page__eyebrow">Administracion</p>
+      <h1 class="accounts-page__title">Gestion de cuentas</h1>
+    </div>
+    <button class="accounts-page__refresh" type="button" (click)="loadAccounts()" [disabled]="isLoading()">
+      Actualizar
+    </button>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="accounts-page__alert accounts-page__alert--error">{{ errorMessage() }}</p>
+  }
+
+  @if (successMessage()) {
+    <p class="accounts-page__alert accounts-page__alert--success">{{ successMessage() }}</p>
+  }
+
+  <div class="accounts-page__grid">
+    <form class="account-form" [formGroup]="accountForm" (ngSubmit)="createAccount()" novalidate>
+      <div class="section-heading">
+        <h2>Crear cuenta</h2>
+      </div>
+
+      <div class="form-grid">
+        <label class="field">
+          <span>Id usuario</span>
+          <input type="number" min="1" formControlName="idUser" />
+          @if (hasError(accountForm.controls.idUser, 'required')) {
+            <small>El usuario es requerido.</small>
+          }
+          @if (hasError(accountForm.controls.idUser, 'min')) {
+            <small>Debe ser mayor a 0.</small>
+          }
+        </label>
+
+        <label class="field">
+          <span>Tipo de cuenta</span>
+          <select formControlName="idAccountType">
+            <option [ngValue]="null">
+              {{ isLoadingAccountTypes() ? 'Cargando tipos...' : 'Seleccione un tipo' }}
+            </option>
+            @for (accountType of accountTypes(); track accountType.id) {
+              <option [ngValue]="accountType.id">{{ accountTypeLabel(accountType) }}</option>
+            }
+          </select>
+          @if (hasError(accountForm.controls.idAccountType, 'required')) {
+            <small>El tipo de cuenta es requerido.</small>
+          }
+          @if (hasError(accountForm.controls.idAccountType, 'min')) {
+            <small>Debe ser mayor a 0.</small>
+          }
+        </label>
+
+        <label class="field">
+          <span>Estado</span>
+          <select formControlName="status">
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <button class="button button--primary account-form__submit" type="submit" [disabled]="isSaving() || isLoadingAccountTypes()">
+        {{ isSaving() ? 'Guardando...' : 'Crear cuenta' }}
+      </button>
+    </form>
+
+    <section class="accounts-list">
+      <form class="filters" [formGroup]="filtersForm" (ngSubmit)="loadAccounts(1)">
+        <label class="field field--search">
+          <span>Buscar</span>
+          <input type="search" formControlName="search" placeholder="Numero de cuenta" />
+        </label>
+
+        <label class="field field--type">
+          <span>Id usuario</span>
+          <input type="number" min="1" formControlName="idUser" />
+        </label>
+
+        <label class="field field--small">
+          <span>Tipo</span>
+          <select formControlName="idAccountType">
+            <option [ngValue]="null">Todos</option>
+            @for (accountType of accountTypes(); track accountType.id) {
+              <option [ngValue]="accountType.id">{{ accountTypeLabel(accountType) }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Estado</span>
+          <select formControlName="status">
+            <option value="">Todos</option>
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field field--small">
+          <span>Registros por pagina</span>
+          <input type="number" min="1" max="100" formControlName="pageSize" />
+        </label>
+
+        <button class="button button--primary" type="submit" [disabled]="isLoading()">Filtrar</button>
+      </form>
+
+      <div class="table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th>Numero de cuenta</th>
+              <th>Balance</th>
+              <th>Estado</th>
+              <th>Id usuario</th>
+              <th>Tipo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isLoading()) {
+              <tr>
+                <td colspan="6" class="empty-state">Cargando cuentas...</td>
+              </tr>
+            } @else if (!accounts().length) {
+              <tr>
+                <td colspan="6" class="empty-state">No hay cuentas para los filtros actuales.</td>
+              </tr>
+            }
+
+            @for (account of accounts(); track account.id) {
+              <tr>
+                <td>{{ account.accountNumber }}</td>
+                <td>{{ formatBalance(account.balance) }}</td>
+                <td>
+                  <span class="status-pill" [class.status-pill--inactive]="account.status === 'INACTIVE'">
+                    {{ account.status }}
+                  </span>
+                </td>
+                <td>{{ account.idUser ?? '-' }}</td>
+                <td>{{ accountTypeName(account.idAccountType) }}</td>
+                <td class="table-actions">
+                  <button class="button button--secondary" type="button" (click)="toggleStatus(account)">
+                    {{ account.status === 'ACTIVE' ? 'Inactivar' : 'Activar' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="pagination">
+        <span>{{ page().totalCount }} registros</span>
+        <div>
+          <button class="button button--ghost" type="button" (click)="previousPage()" [disabled]="page().page <= 1 || isLoading()">
+            Anterior
+          </button>
+          <span>Pagina {{ page().page }} de {{ page().totalPages }}</span>
+          <button class="button button--ghost" type="button" (click)="nextPage()" [disabled]="!canGoNextPage() || isLoading()">
+            Siguiente
+          </button>
+        </div>
+      </footer>
+    </section>
+  </div>
+</section>
